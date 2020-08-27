@@ -307,6 +307,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2026777723}
+  - component: {fileID: 2026777724}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -328,3 +329,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2026777724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026777722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c7a004014820746b56beee2080e013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  landSize: 10
+  waterTile: {fileID: 3354075173457188236, guid: 954798a7e1b939e41b7f49386bbbd876, type: 3}
+  grassTile: {fileID: 2091141825339994786, guid: bbd720be7693e6b4f90679111ca86841, type: 3}
+  dirtTile: {fileID: 5781365653064635766, guid: 501893e695730fa42821d60f29e29709, type: 3}
+  tileSize: 1
+  tileLocation: {x: 0, y: 0, z: 0}

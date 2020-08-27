@@ -2,14 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroundCreator : EditorWindow
+[ExecuteInEditMode]
+public class GroundCreator : MonoBehaviour
 {
-    [MenuItem("Custom/GenerateGround %g")]
-    public static void OpenWindow{
-        //GetWindow<GenerateGround>();
+
+    [SerializeField] int landSize = 10;
+
+    [SerializeField] GameObject waterTile = null;
+    [SerializeField] GameObject grassTile = null;
+    [SerializeField] GameObject dirtTile = null;
+
+    [SerializeField] float tileSize = 1f;
+    [SerializeField] Vector3 tileLocation = Vector3.zero;
+
+    void Start() 
+    {
+        GenerateLand();
+    }
+
+    public void GenerateLand()
+    {
+        for (int i = 0; i < landSize; i++)
+        {
+            Debug.Log($"Placing tile: {i}");
+            Instantiate(waterTile, tileLocation, Quaternion.identity, this.gameObject.transform);
+            //tileLocation.x += tileSize;
+        }
+        
     }
 
 
 }
-
-//https://forum.unity.com/threads/execute-a-script-once-in-editor.540772/
