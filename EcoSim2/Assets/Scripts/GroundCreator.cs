@@ -8,9 +8,7 @@ public class GroundCreator : MonoBehaviour
 {
 
     [SerializeField] int landSize = 10;
-
     [SerializeField] GameObject[] tiles = new GameObject[0];
-
     [SerializeField] float tileSize = 1f;
     
     Vector3 startingTile = Vector3.zero;
@@ -18,8 +16,14 @@ public class GroundCreator : MonoBehaviour
 
     void Update() 
     {   
-        startingTile = new Vector3(this.transform.position.x - landSize/2, this.transform.position.y, this.transform.position.z - landSize/2);
-        if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled) GenerateLand();
+        float x = (this.transform.position.x - landSize / 2) * tileSize;
+        float y = this.transform.position.y;
+        float z = (this.transform.position.z - landSize / 2) * tileSize;
+
+        startingTile = new Vector3(x, y, z);
+
+        if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled) 
+            GenerateLand();
 
     }
 
