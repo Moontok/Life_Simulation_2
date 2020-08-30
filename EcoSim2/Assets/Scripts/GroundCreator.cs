@@ -7,18 +7,35 @@ using UnityEngine;
 [System.Serializable]
 public class GroundCreator : MonoBehaviour
 {
-
+    [Space]
+    [Header("Properties")]
     [SerializeField] Vector2Int landSize = new Vector2Int(1,1);
-    [SerializeField] GameObject[] tiles = new GameObject[0];
+    [Space]
     [SerializeField] float tileSize = 1f;
     [SerializeField] float xOrg = 0;
     [SerializeField] float yOrg = 0;
-    [SerializeField] float noiseScale = 1f;    
+    [SerializeField] float noiseScale = 1f;
 
+    [Space]
+    [Header("Ground Tiles")]
+    [SerializeField] GameObject tile1 = null;
+    [SerializeField] GameObject tile2 = null;
+    [SerializeField] GameObject tile3 = null;    
+    [SerializeField] [Range(0,1)] float tileBand1 = .3f;
+    [SerializeField] [Range(0,1)] float tileBand2 = .6f;
+
+    [Space]
+    [Header("Edible Vegitation")]
+    [SerializeField] GameObject veg1 = null;
+    [SerializeField] [Range(0,1)] float veg1Density = 0f;
+
+    [Space]
+    [Header("Non-edible Plants and Rocks")]
+    [SerializeField] GameObject tree1 = null;
+    [SerializeField][Range(0,1)] float tree1Density = 0f;
+
+    [Space]
     [SerializeField] bool autoUpdate = true;
-    
-    [SerializeField] [Range(0,1)] float band1 = .3f;
-    [SerializeField] [Range(0,1)] float band2 = .6f;
     
     Vector3 startingTile = Vector3.zero;
     Vector3 currentTile = Vector3.zero;
@@ -45,9 +62,9 @@ public class GroundCreator : MonoBehaviour
             for (int z = 0; z < landSize.y; z++)
             {
                 float tileNoiseSample = tileNoise[z,x];
-                if(tileNoiseSample < band1) tileToSet = tiles[0];
-                else if(tileNoiseSample < band2) tileToSet = tiles[1];
-                else tileToSet = tiles[2];
+                if(tileNoiseSample < tileBand1) tileToSet = tile1;
+                else if(tileNoiseSample < tileBand2) tileToSet = tile2;
+                else tileToSet = tile3;
 
                 GameObject tile = Instantiate(tileToSet, currentTile, Quaternion.identity, this.gameObject.transform);
                 tile.transform.localScale = new Vector3(tileSize, 1, tileSize);
