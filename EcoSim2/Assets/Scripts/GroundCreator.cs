@@ -26,19 +26,20 @@ public class GroundCreator : MonoBehaviour
 
     [Space]
     [Header("Edible Vegitation")]
-    [SerializeField] GameObject veg1 = null;
-    [SerializeField] [Range(0,1)] float veg1Density = 0f;
+    [SerializeField] GameObject veg = null;
+    [SerializeField] [Range(0,1)] float vegDensity = 0f;
 
     [Space]
     [Header("Non-edible Plants and Rocks")]
-    [SerializeField] GameObject tree1 = null;
-    [SerializeField][Range(0,1)] float tree1Density = 0f;
+    [SerializeField] GameObject tree = null;
+    [SerializeField][Range(0,1)] float treeDensity = 0f;
 
     [Space]
     [SerializeField] bool autoUpdate = true;
     
     Vector3 startingTile = Vector3.zero;
     Vector3 currentTile = Vector3.zero;
+    List<Vector2> tilesWithGrass = new List<Vector2>();
     
     void Update() 
     {
@@ -51,7 +52,7 @@ public class GroundCreator : MonoBehaviour
 
     public void GenerateLand()
     {
-        DeleteLand();
+        DeleteLand(); // Clear all current land tiles and foliage.
 
         float[,] tileNoise = CalcNoise();
         GameObject tileToSet = null;
@@ -62,16 +63,29 @@ public class GroundCreator : MonoBehaviour
             for (int z = 0; z < landSize.y; z++)
             {
                 float tileNoiseSample = tileNoise[z,x];
-                if(tileNoiseSample < tileBand1) tileToSet = tile1;
-                else if(tileNoiseSample < tileBand2) tileToSet = tile2;
-                else tileToSet = tile3;
+                if(tileNoiseSample < tileBand1) 
+                {
+                    tileToSet = tile1;
+                }
+                else if(tileNoiseSample < tileBand2) 
+                {
+                    tileToSet = tile2;
+                }
+                else 
+                {
+                    tileToSet = tile3;
+                    float xLoc = currentTile.x;
+                    float zLoc = currentTile.z;
+                    tilesWithGrass.Add(new Vector2(xLoc, zLoc));
+                }
 
                 GameObject tile = Instantiate(tileToSet, currentTile, Quaternion.identity, this.gameObject.transform);
                 tile.transform.localScale = new Vector3(tileSize, 1, tileSize);
                 currentTile.z += tileSize;                
             }
             currentTile.x += tileSize;
-        }        
+        }
+        AddFoliage();     
     }
 
     public void DeleteLand()
@@ -87,6 +101,7 @@ public class GroundCreator : MonoBehaviour
             DestroyImmediate(child);
         }
         currentTile = startingTile;
+        tilesWithGrass.Clear();
     }
 
     float[,] CalcNoise()
@@ -114,6 +129,46 @@ public class GroundCreator : MonoBehaviour
         float coordz = this.transform.position.z - landSize.y * tileSize / 2 + tileSize / 2;
 
         startingTile = new Vector3(coordx, coordy, coordz);
+    }
+
+    void AddFoliage()
+    {
+        int numberToCreateGrass = (int)(vegDensity * tilesWithGrass.Count);
+        int numberToCreateTrees = (int)(treeDensity * tilesWithGrass.Count);
+
+        List<int> randNumbers = new List<int>();
+        List<float[]> tiles = new List<float[]>();
+
+        while(tiles.Count < numberToCreateGrass)
+        {
+            int randNum = (int)UnityEngine.Random.Range(0, tilesWithGrass.Count);
+            if(!randNumbers.Contains(randNum))
+            {
+                randNumbers.Add(randNum);
+                tiles.Add(new float[3]{tilesWithGrass[randNum].x, tilesWithGrass[randNum].y, 0});
+            }
+        }
+        while(tiles.Count < numberToCreateGrass + numberToCreateTrees)
+        {
+            int randNum = (int)UnityEngine.Random.Range(0, tilesWithGrass.Count);
+            if(!randNumbers.Contains(randNum))
+            {
+                randNumbers.Add(randNum);
+                tiles.Add(new float[3]{tilesWithGrass[randNum].x, tilesWithGrass[randNum].y, 1});
+            }
+        }
+        
+        foreach (float[] location in tiles)
+        {
+            if(location[2] < 0.01f)
+            {
+                Instantiate(veg, new Vector3(location[0], 0.0f, location[1]), Quaternion.identity, this.gameObject.transform);
+            }
+            else
+            {
+                Instantiate(tree, new Vector3(location[0], 0.0f, location[1]), Quaternion.identity, this.gameObject.transform);
+            }
+        }
     }
 
     void OnValidate() 
