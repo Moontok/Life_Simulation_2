@@ -40,13 +40,22 @@ public class GroundCreator : MonoBehaviour
     Vector3 startingTile = Vector3.zero;
     Vector3 currentTile = Vector3.zero;
     List<Vector2> tilesWithGrass = new List<Vector2>();
+    List<Vector2> treeLocations = new List<Vector2>();
+    List<Vector2> edibleGrassLocations = new List<Vector2>();
+    List<int> randNumbers = new List<int>();
     
     void Update() 
     {
-        CalcStartingTile();
-
-        if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled && autoUpdate) 
+        if(this.transform.hasChanged)
+        {
+            this.transform.hasChanged = false;
+            return;
+        }
+        if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled && autoUpdate)
+        {        
+            CalcStartingTile(); 
             GenerateLand();
+        }
 
     }
 
@@ -85,7 +94,8 @@ public class GroundCreator : MonoBehaviour
             }
             currentTile.x += tileSize;
         }
-        AddFoliage();     
+        AddFoliage(veg, vegDensity, tilesWithGrass, edibleGrassLocations, randNumbers);
+        AddFoliage(tree, treeDensity, tilesWithGrass, treeLocations, randNumbers);    
     }
 
     public void DeleteLand()
@@ -102,6 +112,9 @@ public class GroundCreator : MonoBehaviour
         }
         currentTile = startingTile;
         tilesWithGrass.Clear();
+        edibleGrassLocations.Clear();
+        treeLocations.Clear();
+        randNumbers.Clear();
     }
 
     float[,] CalcNoise()
@@ -131,43 +144,23 @@ public class GroundCreator : MonoBehaviour
         startingTile = new Vector3(coordx, coordy, coordz);
     }
 
-    void AddFoliage()
-    {
-        int numberToCreateGrass = (int)(vegDensity * tilesWithGrass.Count);
-        int numberToCreateTrees = (int)(treeDensity * tilesWithGrass.Count);
+    void AddFoliage(GameObject plant, float density, List<Vector2> baseTiles, List<Vector2> flora, List<int> randomNumbers)
+    {        
+        int numberToCreate = (int)(density * baseTiles.Count);
 
-        List<int> randNumbers = new List<int>();
-        List<float[]> tiles = new List<float[]>();
-
-        while(tiles.Count < numberToCreateGrass)
+        while(flora.Count < numberToCreate)
         {
-            int randNum = (int)UnityEngine.Random.Range(0, tilesWithGrass.Count);
-            if(!randNumbers.Contains(randNum))
+            int randNum = (int)UnityEngine.Random.Range(0, baseTiles.Count);
+            if(!randomNumbers.Contains(randNum))
             {
-                randNumbers.Add(randNum);
-                tiles.Add(new float[3]{tilesWithGrass[randNum].x, tilesWithGrass[randNum].y, 0});
-            }
-        }
-        while(tiles.Count < numberToCreateGrass + numberToCreateTrees)
-        {
-            int randNum = (int)UnityEngine.Random.Range(0, tilesWithGrass.Count);
-            if(!randNumbers.Contains(randNum))
-            {
-                randNumbers.Add(randNum);
-                tiles.Add(new float[3]{tilesWithGrass[randNum].x, tilesWithGrass[randNum].y, 1});
+                randomNumbers.Add(randNum);
+                flora.Add(baseTiles[randNum]);
             }
         }
         
-        foreach (float[] location in tiles)
+        foreach (Vector2 location in flora)
         {
-            if(location[2] < 0.01f)
-            {
-                Instantiate(veg, new Vector3(location[0], 0.0f, location[1]), Quaternion.identity, this.gameObject.transform);
-            }
-            else
-            {
-                Instantiate(tree, new Vector3(location[0], 0.0f, location[1]), Quaternion.identity, this.gameObject.transform);
-            }
+            Instantiate(plant, new Vector3(location.x, 0.0f, location.y), Quaternion.identity, this.gameObject.transform);
         }
     }
 
