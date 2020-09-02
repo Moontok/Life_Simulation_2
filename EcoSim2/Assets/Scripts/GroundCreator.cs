@@ -32,6 +32,7 @@ public class GroundCreator : MonoBehaviour
     [Space]
     [Header("Non-edible Plants and Rocks")]
     [SerializeField] GameObject tree = null;
+    [SerializeField] Vector2 treeScaleRange = new Vector2(1,1);
     [SerializeField][Range(0,1)] float treeDensity = 0f;
 
     [Space]
@@ -51,6 +52,7 @@ public class GroundCreator : MonoBehaviour
             this.transform.hasChanged = false;
             return;
         }
+
         if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled && autoUpdate)
         {        
             CalcStartingTile(); 
@@ -94,8 +96,8 @@ public class GroundCreator : MonoBehaviour
             }
             currentTile.x += tileSize;
         }
-        AddFoliage(veg, vegDensity, tilesWithGrass, edibleGrassLocations, randNumbers);
-        AddFoliage(tree, treeDensity, tilesWithGrass, treeLocations, randNumbers);    
+        AddFoliage(veg, vegDensity, tilesWithGrass, edibleGrassLocations, randNumbers, new Vector2(1,1));
+        AddFoliage(tree, treeDensity, tilesWithGrass, treeLocations, randNumbers, treeScaleRange);    
     }
 
     public void DeleteLand()
@@ -144,7 +146,7 @@ public class GroundCreator : MonoBehaviour
         startingTile = new Vector3(coordx, coordy, coordz);
     }
 
-    void AddFoliage(GameObject plant, float density, List<Vector2> baseTiles, List<Vector2> flora, List<int> randomNumbers)
+    void AddFoliage(GameObject plantToPlace, float density, List<Vector2> baseTiles, List<Vector2> flora, List<int> randomNumbers, Vector2 scaleRange)
     {        
         int numberToCreate = (int)(density * baseTiles.Count);
 
@@ -160,7 +162,9 @@ public class GroundCreator : MonoBehaviour
         
         foreach (Vector2 location in flora)
         {
-            Instantiate(plant, new Vector3(location.x, 0.0f, location.y), Quaternion.identity, this.gameObject.transform);
+            GameObject plant = Instantiate(plantToPlace, new Vector3(location.x, 0.0f, location.y), Quaternion.identity, this.gameObject.transform);
+            float scale = UnityEngine.Random.Range(scaleRange.x, scaleRange.y);
+            plant.transform.localScale = new Vector3(scale, scale, scale);
         }
     }
 

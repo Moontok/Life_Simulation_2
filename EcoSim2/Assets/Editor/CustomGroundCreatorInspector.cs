@@ -9,6 +9,7 @@ public class CustomGroundCreatorInspector : Editor
     SerializedProperty autoUpdate;
     SerializedProperty vegDensity;
     SerializedProperty treeDensity;
+    SerializedProperty treeScaleRange;
     float old_vegDensity;
     float old_treeDensity;
 
@@ -17,7 +18,7 @@ public class CustomGroundCreatorInspector : Editor
         creator = target as GroundCreator;
         autoUpdate = serializedObject.FindProperty("autoUpdate");
         vegDensity = serializedObject.FindProperty("vegDensity");
-        treeDensity = serializedObject.FindProperty("treeDensity"); 
+        treeDensity = serializedObject.FindProperty("treeDensity");
     }
 
     public override void OnInspectorGUI()
