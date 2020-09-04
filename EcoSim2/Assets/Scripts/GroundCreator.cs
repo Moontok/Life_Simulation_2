@@ -40,7 +40,11 @@ public class GroundCreator : MonoBehaviour
     
     Vector3 startingTile = Vector3.zero;
     Vector3 currentTile = Vector3.zero;
+
+    // TODO Track tile locations for tile change effects.
     List<Vector2> tilesWithGrass = new List<Vector2>();
+
+    // TODO Track GameObjects instead of Vector2 locations.
     List<Vector2> treeLocations = new List<Vector2>();
     List<Vector2> edibleGrassLocations = new List<Vector2>();
     List<int> randNumbers = new List<int>();
@@ -52,10 +56,8 @@ public class GroundCreator : MonoBehaviour
             this.transform.hasChanged = false;
             return;
         }
-
         if(Selection.Contains(this.gameObject) && this.isActiveAndEnabled && autoUpdate)
-        {        
-            CalcStartingTile(); 
+        { 
             GenerateLand();
         }
 
@@ -64,6 +66,8 @@ public class GroundCreator : MonoBehaviour
     public void GenerateLand()
     {
         DeleteLand(); // Clear all current land tiles and foliage.
+                
+        CalcStartingTile();
 
         float[,] tileNoise = CalcNoise();
         GameObject tileToSet = null;
